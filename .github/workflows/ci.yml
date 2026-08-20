@@ -47,3 +47,19 @@ jobs:
         run: |
           echo "CI Pipeline completed successfully."
           echo "Build time: $(date)"
+
+      - name: Send Success Notification
+        if: success()
+        run: |
+          curl -X POST \
+            -H "Content-type: application/json" \
+            --data '{"text":"✅ CI Pipeline SUCCESS: devops-webapp build completed successfully."}' \
+            "${{ secrets.SLACK_WEBHOOK_URL }}"
+
+      - name: Send Failure Notification
+        if: failure()
+        run: |
+          curl -X POST \
+            -H "Content-type: application/json" \
+            --data '{"text":"❌ CI Pipeline FAILED: devops-webapp build failed. Check GitHub Actions logs."}' \
+            "${{ secrets.SLACK_WEBHOOK_URL }}"
